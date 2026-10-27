@@ -1,6 +1,19 @@
 # Better Spaceflight source — feasibility stage
 
-Java/Forge subject repository for the isolated lab. Read `../../AGENTS.md` and `../../README.md` first. This is a new uncommitted independent repository, not a fork of the main pack or VS. Current code is a version-pinned adapter and a separate nonshipping diagnostic probe; survival gameplay is not implemented.
+Java/Forge subject repository for the isolated lab. Read `../../AGENTS.md` and `../../README.md` first. This is a new independent repository, not a fork of the main pack or VS; its source is now committed for private preservation. Current code is a version-pinned adapter and a separate nonshipping diagnostic probe; survival gameplay is not implemented.
+
+## Private source publication
+
+Published to the private [`better-content/better-spaceflight`](https://github.com/better-content/better-spaceflight)
+repository on `main`. Historical uncommitted-source and unpublished statements
+below describe their original checkpoints. Publication is not a release or full
+feasibility/gameplay acceptance: dynamic coast motion remains failing, survival
+gameplay is absent, and real-client, passenger and restart acceptance remain open.
+It does not authorize engineering continuation, builds, runtime retries, staging
+or deployment. Linked evidence and parent-workspace documents may exist only in
+the original local lab. Accidentally tracked compressed Netty/JUnit debug logs
+were reviewed and removed from the current tree without rewriting history; their
+original files and all runtime evidence remain local.
 
 ## Builds
 
