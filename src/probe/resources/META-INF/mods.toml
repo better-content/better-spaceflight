@@ -1,0 +1,14 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+[[mods]]
+modId="better_spaceflight_probe"
+version="0.1.0"
+displayName="Better Spaceflight NONSHIPPING Transfer Probe"
+description='''Destructive operator-only diagnostics for fresh disposable worlds. Not part of the survival mod.'''
+[[dependencies.better_spaceflight_probe]]
+modId="better_spaceflight"
+mandatory=true
+versionRange="[0.1.0]"
+ordering="AFTER"
+side="BOTH"
