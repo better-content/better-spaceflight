@@ -26,6 +26,18 @@ configurations[probe.runtimeOnlyConfigurationName].extendsFrom(configurations.ru
 sourceSets.test.get().compileClasspath += probe.output
 sourceSets.test.get().runtimeClasspath += probe.output
 
+// Independent, NONSHIPPING qualification authoring only. Nothing in the
+// historical probe/main/test runtime, existing gameTestServer, jar or default
+// task graph depends on this source set. No run configuration is registered.
+val qualificationSupport by sourceSets.creating {
+    compileClasspath += sourceSets.main.get().output + sourceSets.main.get().compileClasspath
+    runtimeClasspath += sourceSets.main.get().output + sourceSets.main.get().runtimeClasspath
+}
+configurations[qualificationSupport.implementationConfigurationName]
+    .extendsFrom(configurations.implementation.get())
+configurations[qualificationSupport.runtimeOnlyConfigurationName]
+    .extendsFrom(configurations.runtimeOnly.get())
+
 val attemptId = providers.gradleProperty("attemptId").orElse(UUID.randomUUID().toString()).get()
 require(attemptId.matches(Regex("[A-Za-z0-9_-]+"))) { "Invalid attemptId" }
 val attemptRoot = rootDir.resolve("instances/verification/$attemptId")

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "native": [
+    "native_original_artifacts", "native_default_off", "native_startup_checksum",
+    "native_connected_component", "native_joint_identity", "native_physics_liveness",
+    "native_pose_velocity", "native_frame_boundary", "native_loaded_coverage",
+    "native_unloaded_claims", "native_block_entity_cargo", "native_capability_ticks",
+    "native_actor_closure", "native_destination_empty", "native_motion_gravity",
+    "native_equal_layout_refusal", "native_ascent_space", "native_overworld_route",
+    "native_wastelands_route", "native_abyssal_route", "native_twilight_route",
+    "native_addon_veto"
+  ],
+  "fault": [
+    "fault_before_mutation", "fault_preparing_ambiguous", "fault_cancel_no_mutation",
+    "fault_destination_copy", "fault_source_clear", "fault_partial_component",
+    "fault_joint_restore", "fault_release_fsync", "fault_restart_reconcile",
+    "fault_restore_integrity"
+  ],
+  "client": [
+    "client_four_markers", "client_pilot_confirmation", "client_mounted_tracking",
+    "client_concurrent_users", "client_restart_persistence"
+  ],
+  "routes": {
+    "native_ascent_space": ["surface-allowlist", "better_spaceflight:space"],
+    "native_overworld_route": ["better_spaceflight:space", "minecraft:overworld"],
+    "native_wastelands_route": ["better_spaceflight:space", "fallout_wastelands_:wastelands"],
+    "native_abyssal_route": ["better_spaceflight:space", "better_abyssal_city:abyssal"],
+    "native_twilight_route": ["better_spaceflight:space", "twilightforest:twilight_forest"]
+  }
+}

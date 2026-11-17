@@ -1,0 +1,14 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+[[mods]]
+modId="better_spaceflight_qualification"
+version="0.1.0"
+displayName="Better Spaceflight NONSHIPPING Qualification Skeleton"
+description='''Unregistered author-only GameTest skeleton; no production dispatch or readiness.'''
+[[dependencies.better_spaceflight_qualification]]
+modId="better_spaceflight"
+mandatory=true
+versionRange="[0.1.0]"
+ordering="AFTER"
+side="BOTH"
