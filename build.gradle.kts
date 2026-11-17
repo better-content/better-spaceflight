@@ -1,5 +1,6 @@
 import java.security.MessageDigest
 import java.util.UUID
+import java.util.zip.ZipFile
 
 plugins {
     id("net.minecraftforge.gradle") version "6.0.54"
@@ -79,6 +80,39 @@ dependencies {
 }
 
 dependencyLocking { lockAllConfigurations() }
+
+// VS ships these Jackson libraries as nested JarJar dependencies. Gradle does not put
+// nested JARs on javac's classpath, so use only the exact VS-provided bytes for compilation.
+// They are not bundled into our runtime JAR and no new dependency is downloaded.
+val vsJacksonHashes = mapOf(
+    "jackson-annotations" to "efaff8693acbae673468d251b5e5ea8fc7ce1b852327bccf1cce72244c2e5f1c",
+    "jackson-core" to "ab4793e5df4fbfae445ca55e9e1439311c80fa8b34fc13162c1260902b4dbea0",
+    "jackson-databind" to "54377fa855f52ed87e8f689b35249971840b16870dee76806d5d200cbcd66f27",
+    "jackson-dataformat-cbor" to "f93c35d8b48ebc8bfe96a9d9e6d7e473f4744eb74819213e1d3af6ba40c940d2",
+)
+val vsJacksonDirectory = layout.buildDirectory.dir("verified-vs-jackson")
+val extractVsJackson by tasks.registering {
+    outputs.dir(vsJacksonDirectory)
+    outputs.upToDateWhen { false } // Reverify nested bytes even when Gradle reuses its cache.
+    doLast {
+        val vsJar = configurations.compileClasspath.get().resolvedConfiguration.resolvedArtifacts
+            .single { it.moduleVersion.id.group == "curse.maven" && it.name == "valkyrien-skies-258371" }.file
+        val destination = vsJacksonDirectory.get().asFile.also { it.mkdirs() }
+        ZipFile(vsJar).use { archive ->
+            vsJacksonHashes.forEach { (name, expected) ->
+                val filename = "$name-2.14.0.jar"
+                val entry = archive.getEntry("META-INF/jars/$filename")
+                    ?: error("Pinned VS artifact lacks $filename")
+                val bytes = archive.getInputStream(entry).use { it.readBytes() }
+                val actual = MessageDigest.getInstance("SHA-256").digest(bytes)
+                    .joinToString("") { "%02x".format(it) }
+                check(actual == expected) { "VS nested $filename checksum mismatch: $actual" }
+                destination.resolve(filename).writeBytes(bytes)
+            }
+        }
+    }
+}
+sourceSets.main.get().compileClasspath += files(fileTree(vsJacksonDirectory) { include("*.jar") }).builtBy(extractVsJackson)
 
 tasks.withType<JavaCompile>().configureEach { options.release.set(17) }
 tasks.withType<Test>().configureEach { useJUnitPlatform() }
