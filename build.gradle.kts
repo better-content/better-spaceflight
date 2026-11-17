@@ -105,9 +105,23 @@ val provenance = tasks.register("writeBuildProvenance") {
                 digest.update(it.relativeTo(rootDir).invariantSeparatorsPath.toByteArray())
                 digest.update(0.toByte()); digest.update(it.readBytes()); digest.update(0.toByte())
             }
+        val revision = ProcessBuilder("git", "rev-parse", "--verify", "HEAD")
+            .directory(rootDir).redirectErrorStream(true).start()
+        val sourceHead = revision.inputStream.bufferedReader().use { it.readText().trim() }
+        check(revision.waitFor() == 0 && sourceHead.matches(Regex("[0-9a-f]{40}"))) {
+            "Production provenance requires a committed source checkout"
+        }
+        val status = ProcessBuilder("git", "status", "--porcelain", "--untracked-files=all", "--",
+            "src/main", "build.gradle.kts", "settings.gradle.kts", "gradle.properties",
+            "gradle/wrapper/gradle-wrapper.properties")
+            .directory(rootDir).redirectErrorStream(true).start()
+        val sourceStatus = status.inputStream.bufferedReader().use { it.readText().trim() }
+        check(status.waitFor() == 0 && sourceStatus.isEmpty()) {
+            "Production provenance refuses uncommitted runtime inputs: $sourceStatus"
+        }
         val properties = output.get().file("META-INF/better-content-source.properties").asFile
         properties.parentFile.mkdirs()
-        properties.writeText("repository=better-spaceflight\nmod_id=better_spaceflight\nsource_head=UNCOMMITTED\n" +
+        properties.writeText("repository=better-spaceflight\nmod_id=better_spaceflight\nsource_head=$sourceHead\n" +
             "runtime_inputs_sha256=${digest.digest().joinToString("") { "%02x".format(it) }}\n")
     }
 }
