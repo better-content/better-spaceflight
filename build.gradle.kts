@@ -112,7 +112,26 @@ val extractVsJackson by tasks.registering {
         }
     }
 }
-sourceSets.main.get().compileClasspath += files(fileTree(vsJacksonDirectory) { include("*.jar") }).builtBy(extractVsJackson)
+val vsJacksonClasspath = files(fileTree(vsJacksonDirectory) { include("*.jar") }).builtBy(extractVsJackson)
+sourceSets.main.get().compileClasspath += vsJacksonClasspath
+sourceSets.test.get().compileClasspath += vsJacksonClasspath
+sourceSets.test.get().runtimeClasspath += vsJacksonClasspath
+
+// The byte-integrity test must inspect the pinned original JAR, never the ForgeGradle
+// mapped compile artifact. Resolve it through the existing verified CurseMaven input.
+tasks.named<Test>("test") {
+    doFirst {
+        val originalVs = configurations.detachedConfiguration(
+            dependencies.create("curse.maven:valkyrien-skies-258371:7906689"))
+            .also { it.isTransitive = false }.singleFile
+        val actual = MessageDigest.getInstance("SHA-256").digest(originalVs.readBytes())
+            .joinToString("") { "%02x".format(it) }
+        check(actual == "f99f24de62015451a047f90484cf9d25970cac350105b581c22b2d5247ebfd53") {
+            "Original VS artifact checksum mismatch: $actual"
+        }
+        systemProperty("spaceflight.vs.originalJar", originalVs.absolutePath)
+    }
+}
 
 tasks.withType<JavaCompile>().configureEach { options.release.set(17) }
 tasks.withType<Test>().configureEach { useJUnitPlatform() }
