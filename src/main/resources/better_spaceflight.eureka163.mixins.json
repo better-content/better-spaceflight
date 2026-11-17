@@ -1,0 +1,9 @@
+{
+  "required": false,
+  "minVersion": "0.8.5",
+  "package": "com.bettercontent.spaceflight.vs.compat.mixin",
+  "plugin": "com.bettercontent.spaceflight.vs.compat.internal.Eureka163MixinGate",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": ["EurekaShipControlMixin", "EurekaShipHelmMixin"],
+  "injectors": { "defaultRequire": 1 }
+}
