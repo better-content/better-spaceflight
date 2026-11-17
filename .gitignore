@@ -1,4 +1,7 @@
 .gradle/
+.gradle-user-home/
+.tmp/
+instances/
 build/
 run/
 *.log

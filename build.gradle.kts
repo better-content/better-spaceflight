@@ -26,10 +26,9 @@ configurations[probe.runtimeOnlyConfigurationName].extendsFrom(configurations.ru
 sourceSets.test.get().compileClasspath += probe.output
 sourceSets.test.get().runtimeClasspath += probe.output
 
-val labRoot = rootDir.resolve("../..").canonicalFile
 val attemptId = providers.gradleProperty("attemptId").orElse(UUID.randomUUID().toString()).get()
 require(attemptId.matches(Regex("[A-Za-z0-9_-]+"))) { "Invalid attemptId" }
-val attemptRoot = labRoot.resolve("instances/verification/$attemptId")
+val attemptRoot = rootDir.resolve("instances/verification/$attemptId")
 val probeGate = providers.gradleProperty("probeGate").orElse("static").get()
 require(probeGate in setOf("static", "dynamic")) { "Invalid probeGate: $probeGate" }
 
@@ -71,7 +70,10 @@ dependencyLocking { lockAllConfigurations() }
 
 tasks.withType<JavaCompile>().configureEach { options.release.set(17) }
 tasks.withType<Test>().configureEach { useJUnitPlatform() }
-tasks.named<Jar>("jar") { finalizedBy("reobfJar") }
+tasks.named<Jar>("jar") {
+    manifest.attributes("MixinConfigs" to "better_spaceflight.vs2411.mixins.json,better_spaceflight.eureka163.mixins.json")
+    finalizedBy("reobfJar")
+}
 val stageRuntimeJar by tasks.registering(Copy::class) {
     dependsOn("reobfJar")
     from(layout.buildDirectory.file("reobfJar/output.jar"))

@@ -80,7 +80,8 @@ public final class Vs2411Adapter {
         if (!ship.getChunkClaimDimension().equals(VSGameUtilsKt.getDimensionId(source))) {
             throw new IllegalStateException("Ship no longer owned by expected source dimension");
         }
-        // Reject unequal chunk vertical layouts: pinned VS copies sections by index.
+        // Keep the conservative equal-layout guard: the pinned absolute-Y serializer can clip
+        // out-of-range sections, block entities and ticks before destructive source clearing.
         new SectionLayout(source.getMinBuildHeight(), source.getHeight()).requireCompatible(
             new SectionLayout(destination.getMinBuildHeight(), destination.getHeight()));
         var data = ValkyrienSkiesMod.getVsCore().newShipTeleportData(

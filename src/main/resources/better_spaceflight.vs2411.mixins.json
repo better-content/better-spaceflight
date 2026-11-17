@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8.5",
+  "package": "com.bettercontent.spaceflight.vs.compat.mixin",
+  "plugin": "com.bettercontent.spaceflight.vs.compat.internal.Vs2411MixinGate",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "VsFnAccess",
+    "VsFnMixin",
+    "VsFuAccess",
+    "VsFuMixin",
+    "VsFqAccess",
+    "VsFqMixin",
+    "VsFrameMixin",
+    "VsPhysShipMixin"
+  ],
+  "injectors": { "defaultRequire": 1 }
+}
