@@ -85,10 +85,13 @@ dependencyLocking { lockAllConfigurations() }
 // nested JARs on javac's classpath, so use only the exact VS-provided bytes for compilation.
 // They are not bundled into our runtime JAR and no new dependency is downloaded.
 val vsJacksonHashes = mapOf(
-    "jackson-annotations" to "efaff8693acbae673468d251b5e5ea8fc7ce1b852327bccf1cce72244c2e5f1c",
-    "jackson-core" to "ab4793e5df4fbfae445ca55e9e1439311c80fa8b34fc13162c1260902b4dbea0",
-    "jackson-databind" to "54377fa855f52ed87e8f689b35249971840b16870dee76806d5d200cbcd66f27",
-    "jackson-dataformat-cbor" to "f93c35d8b48ebc8bfe96a9d9e6d7e473f4744eb74819213e1d3af6ba40c940d2",
+    "jackson-annotations-2.14.0.jar" to "efaff8693acbae673468d251b5e5ea8fc7ce1b852327bccf1cce72244c2e5f1c",
+    "jackson-core-2.14.0.jar" to "ab4793e5df4fbfae445ca55e9e1439311c80fa8b34fc13162c1260902b4dbea0",
+    "jackson-databind-2.14.0.jar" to "54377fa855f52ed87e8f689b35249971840b16870dee76806d5d200cbcd66f27",
+    "jackson-dataformat-cbor-2.14.0.jar" to "f93c35d8b48ebc8bfe96a9d9e6d7e473f4744eb74819213e1d3af6ba40c940d2",
+    "jackson-kotlin-dsl-1.2.0.jar" to "e3edb2ac4424032c7743cb4677ae17f11ff9fb3dfaebe524202d9881538dc3a6",
+    "jackson-module-kotlin-2.14.0-rubyfork.jar" to "94cb703fa9da12113cf0af2c6e87e3327d5b22338d5d7199a4f51f3f033477e8",
+    "jackson-module-parameter-names-2.14.0.jar" to "9022863dca199b2f30f8f684eeb049af8c60de5d9c8a04122d7b96f62f90681d",
 )
 val vsJacksonDirectory = layout.buildDirectory.dir("verified-vs-jackson")
 val extractVsJackson by tasks.registering {
@@ -99,8 +102,7 @@ val extractVsJackson by tasks.registering {
             .single { it.moduleVersion.id.group == "curse.maven" && it.name == "valkyrien-skies-258371" }.file
         val destination = vsJacksonDirectory.get().asFile.also { it.mkdirs() }
         ZipFile(vsJar).use { archive ->
-            vsJacksonHashes.forEach { (name, expected) ->
-                val filename = "$name-2.14.0.jar"
+            vsJacksonHashes.forEach { (filename, expected) ->
                 val entry = archive.getEntry("META-INF/jars/$filename")
                     ?: error("Pinned VS artifact lacks $filename")
                 val bytes = archive.getInputStream(entry).use { it.readBytes() }
