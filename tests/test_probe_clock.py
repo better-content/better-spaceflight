@@ -26,9 +26,10 @@ class ProbeClockGuards(unittest.TestCase):
 
     def test_launcher_lock_is_project_scoped(self):
         script = (REPO / 'scripts/gradle-lab.sh').read_text()
-        self.assertIn('flock -n -E 75 "$lab/.tmp/spaceflight-runtime.lock"', script)
+        self.assertIn('repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)', script)
+        self.assertIn('flock -n -E 75 "$repo/.tmp/spaceflight-runtime.lock"', script)
         self.assertNotIn('better-content-gradle.lock', script)
-        self.assertIn('GRADLE_USER_HOME="$lab/generated/gradle-home"', script)
+        self.assertIn('GRADLE_USER_HOME="$repo/.gradle-user-home"', script)
 
     def test_daemon_cpu_and_heap_explicit(self):
         properties = (REPO / 'gradle.properties').read_text()
